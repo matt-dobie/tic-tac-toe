@@ -46,18 +46,25 @@ button:hover {
   margin: 30px;
 }
 
-.mark-choice {
+.mark-choice, .difficulty-choice {
   margin: 100px auto;
   padding: 0 20px;
 }
 
-.mark-choice button {
+.mark-choice button, .difficulty-choice button {
   font-family: "Indie Flower", cursive;
-  font-size: 60px;
   width: 100px;
 }
 
-.mark-choice .back {
+.mark-choice button.diff, .difficulty-choice button.diff {
+  font-size: 25px;
+}
+
+.mark-choice button.mark, .difficulty-choice button.mark {
+  font-size: 60px;
+}
+
+.mark-choice .back, .difficulty-choice .back {
   margin: 60px auto;
 }
 
@@ -93,11 +100,11 @@ button:hover {
   background-color: white;
 }
 
-#cell1, #cell2, #cell3, #cell4, #cell5, #cell6 {
+#cell0, #cell1, #cell2, #cell3, #cell4, #cell5 {
   border-bottom: solid 4px black;
 }
 
-#cell1, #cell2, #cell4, #cell5, #cell7, #cell8 {
+#cell0, #cell1, #cell3, #cell4, #cell6, #cell7 {
   border-right: solid 4px black;
 }
 
