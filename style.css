@@ -76,7 +76,7 @@ button:hover {
 
 .grid {
   display: table;
-  margin: 30px auto;
+  margin: 30px auto 20px;
 }
 
 .grid .row {
@@ -109,7 +109,7 @@ button:hover {
 }
 
 .refresh-display {
-  margin: 30px auto;
+  margin: 0 auto;
 }
 
 .refresh-display .navigate {
@@ -135,4 +135,16 @@ footer a:visited {
 
 footer a:hover {
   color: red;
+}
+
+@media (min-width: 576px) {
+  .player-choice, .difficulty-choice {
+    margin-top: 170px;
+  }
+  .mark-choice {
+    margin-top: 120px;
+  }
+  .display {
+    margin-top: 70px;
+  }
 }

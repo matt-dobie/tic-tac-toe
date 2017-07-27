@@ -1,3 +1,4 @@
+
 body {
   font-family: "Indie Flower", cursive;
   text-align: center;
@@ -69,7 +70,7 @@ button {
 
 .grid {
   display: table;
-  margin: 30px auto;
+  margin: 30px auto 20px;
   .row {
     display: table-row;
     .cell {
@@ -98,7 +99,7 @@ button {
 }
 
 .refresh-display {
-  margin: 30px auto;
+  margin: 0 auto;
   .navigate {
     display: inline-block;
     margin: 30px;
@@ -119,5 +120,20 @@ footer {
     &:hover {
       color: red;
     }
+  }
+}
+
+// Medium devices (tablets, 768px and up)
+@media (min-width: 576px) {
+  .player-choice, .difficulty-choice {
+    margin-top: 170px;
+  }
+
+  .mark-choice {
+    margin-top: 120px;
+  }
+
+  .display {
+    margin-top: 70px;
   }
 }
