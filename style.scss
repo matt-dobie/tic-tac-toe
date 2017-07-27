@@ -4,28 +4,23 @@ body {
   font-size: 40px;
 }
 
-h1 {
-  display: none;
-  font-family: "Helvetica", sans-serif;
-  font-weight: lighter;
-  font-size: 20px;
-}
-
 button {
-    border: none;
-    outline: none;
-    background-color: white;
-    width: 200px;
-    display: inline-block;
-    font-size: 20px;
-    opacity: 0.7;
-    border-radius: 20px;
-    border: solid 2px transparent;
-    cursor: pointer;
-    &:hover {
-      opacity: 1;
-      border: dashed 2px black;
-    }
+  border: none;
+  outline: none;
+  background-color: white;
+  width: 150px;
+  display: inline-block;
+  font-size: 20px;
+  opacity: 0.7;
+  border-radius: 20px;
+  border: solid 2px transparent;
+  padding: 10px;
+  margin: 10px;
+  cursor: pointer;
+  &:hover {
+    opacity: 1;
+    border: dashed 2px black;
+  }
 }
 
 .navigate {
@@ -47,30 +42,34 @@ button {
   margin: 100px auto;
   padding: 0 20px;
   button {
-    font-family: "Indie Flower", cursive;
     width: 100px;
     &.diff {
-      font-size: 25px;
+      font-size: 20px;
     }
     &.mark {
       font-size: 60px;
+      font-family: "Indie Flower", cursive;
+      padding: 0;
     }
   }
   .back {
-    margin: 60px auto;
+    margin: 40px auto;
   }
 }
 
+.mark-choice {
+  margin: 60px auto;
+}
 
 .display {
-  margin: 60px auto 10px;
+  margin: 50px auto 10px;
   padding: 0 20px;
   font-size: 25px;
 }
 
 .grid {
   display: table;
-  margin: 40px auto;
+  margin: 30px auto;
   .row {
     display: table-row;
     .cell {
@@ -99,9 +98,26 @@ button {
 }
 
 .refresh-display {
-  margin: 40px auto;
+  margin: 30px auto;
   .navigate {
     display: inline-block;
     margin: 30px;
+  }
+}
+
+footer {
+  position: absolute;
+  margin: 0 auto;
+  bottom: 15px;
+  width: 100%;
+  font-size: 14px;
+  a {
+    text-decoration: none;
+    &:visited {
+      color: black;
+    }
+    &:hover {
+      color: red;
+    }
   }
 }

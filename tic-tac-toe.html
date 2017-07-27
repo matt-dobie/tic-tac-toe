@@ -11,10 +11,6 @@
   </head>
 
   <body>
-  
-    <header>
-      <h1>Tic Tac Toe</h1>
-    </header>
 
     <div class="player-choice">
       <p>How many players?</p>
@@ -24,9 +20,9 @@
 
     <div class="difficulty-choice">
       <p>How difficult?</p>
-      <button class="diff" id="easy">easy</button>
-      <button class="diff" id="normal">normal</button>
-      <button class="diff" id="hard">hard</button>
+      <button class="diff" id="easy">Easy</button>
+      <button class="diff" id="normal">Normal</button>
+      <button class="diff" id="hard">Hard</button>
       <span class="navigate back"><i class="fa fa-angle-left"></i></span>
     </div>
 
@@ -39,12 +35,10 @@
     
 
     <div class="game">
-
       <div class="display">
-        <p class="player-message">Your turn: Player <span id="player">1</span></p>
+        <p class="player-message">Your turn</p>
         <p id="final-message"></p>
       </div>
-
       <div class="grid">
         <div class="row">
           <div class="cell" id="cell0" value="0"></div>
@@ -62,17 +56,17 @@
           <div class="cell" id="cell8" value="8"></div>
         </div>
       </div>
-
       <div class="refresh-display">
         <span class="navigate back"><i class="fa fa-angle-left"></i></span>
         <span class="navigate refresh"><i class="fa fa-refresh"></i></span>
       </div>
-
     </div>
 
+  <footer>
+    <p>Created by <a href="http://mattdobie.com" target="_blank">Matt Dobie</a></p>
+  </footer>
 
   <script src="scripts.js"></script>
-  <!-- <script src="ai.js"></script> -->
 
   </body>
 
