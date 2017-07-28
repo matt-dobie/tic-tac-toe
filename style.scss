@@ -32,7 +32,16 @@ button {
   }
 }
 
+.intro {
+  margin-top: 120px;
+  opacity: 0;
+  h1 {
+    font-size: 40px;
+  }
+}
+
 .player-choice {
+  opacity: 0;
   margin: 100px auto;
   p {
     margin: 30px;
@@ -107,10 +116,12 @@ button {
 }
 
 footer {
-  position: absolute;
-  margin: 0 auto;
-  bottom: 15px;
+  position: fixed;
+  left: 0;
+  bottom: 0;
   width: 100%;
+  padding-bottom: 5px;
+  background-color: white;
   font-size: 14px;
   a {
     text-decoration: none;
@@ -125,12 +136,19 @@ footer {
 
 // Medium devices (tablets, 768px and up)
 @media (min-width: 576px) {
+  .intro {
+    margin-top: 150px;
+    h1 {
+      font-size: 70px;
+    }
+  }
+
   .player-choice, .difficulty-choice {
     margin-top: 170px;
   }
 
   .mark-choice {
-    margin-top: 120px;
+    margin-top: 140px;
   }
 
   .display {

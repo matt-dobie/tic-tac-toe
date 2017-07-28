@@ -19,14 +19,16 @@ globals.gameType;
 var ui = {};
 
 // UI Vars
-ui.currentView = ".player-choice";
+ui.currentView = ".intro";
 ui.finalMessage = "";
 
 // Hide All Views
 ui.hideAllViews = function() {
+  $(".player-choice").hide();
   $(".difficulty-choice").hide();
   $(".mark-choice").hide();
   $(".game").hide();
+  $(".player-choice").css("opacity", 1);
 };
 
 // Switch Between Views
@@ -442,7 +444,13 @@ Game.score = function(_state) {
 //// CONTROL ////
 $(document).ready(function() {
   
+  // Intro
   ui.hideAllViews();
+  $(".intro").animate({opacity: 1}, "slow");
+  
+  setTimeout(function() {
+    ui.switchViewTo(".player-choice");
+  }, 2000);
 
   // Select Single Player
   $("#one-player").on("click", function() {
