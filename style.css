@@ -1,3 +1,8 @@
+/*
+  Author: Matthew Dobie
+  Author URL: mattdobie.com
+  Description: CSS for simple Tic-Tac-Toe Game
+*/
 body {
   font-family: "Indie Flower", cursive;
   text-align: center;
@@ -8,29 +13,33 @@ button {
   border: none;
   outline: none;
   background-color: white;
-  width: 150px;
   display: inline-block;
+  width: 150px;
+  padding: 10px;
+  margin: 10px;
   font-size: 20px;
   opacity: 0.7;
   border-radius: 20px;
   border: solid 2px transparent;
-  padding: 10px;
-  margin: 10px;
   cursor: pointer;
 }
 
 button:hover {
   opacity: 1;
-  border: dashed 2px black;
+  border: dashed 2px #222;
 }
 
 .navigate {
   display: block;
+}
+
+.navigate .back, .navigate .refresh {
+  cursor: pointer;
   opacity: 0.3;
 }
 
-.navigate:hover {
-  opacity: 1;
+.navigate .back:hover, .navigate .refresh:hover {
+  opacity: 0.8;
 }
 
 .intro {
@@ -61,7 +70,7 @@ button:hover {
 }
 
 .mark-choice button.diff, .difficulty-choice button.diff {
-  font-size: 20px;
+  font-size: 18px;
 }
 
 .mark-choice button.mark, .difficulty-choice button.mark {
@@ -70,7 +79,7 @@ button:hover {
   padding: 0;
 }
 
-.mark-choice .back, .difficulty-choice .back {
+.mark-choice .navigate, .difficulty-choice .navigate {
   margin: 40px auto;
 }
 
@@ -99,7 +108,7 @@ button:hover {
   display: table-cell;
   padding: 0;
   font-size: 55px;
-  font-weight: lighter;
+  cursor: pointer;
 }
 
 .grid .row .cell:hover {
@@ -108,6 +117,7 @@ button:hover {
 
 .grid .row .cell:hover.used {
   background-color: white;
+  cursor: default;
 }
 
 #cell0, #cell1, #cell2, #cell3, #cell4, #cell5 {

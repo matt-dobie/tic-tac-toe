@@ -10,9 +10,9 @@
 var globals = {};
 globals.playerIcon;
 globals.aiIcon;
-globals.difficulty;
-globals.gameType;
-
+globals.difficulty = "easy";
+globals.isSinglePlayer = true;
+globals.isFirstTurn = true;
 
 
 //// UI ////
@@ -34,7 +34,7 @@ ui.hideAllViews = function() {
 // Switch Between Views
 ui.switchViewTo = function(view) {
   $(ui.currentView).fadeOut({
-    duration: "fast",
+    duration: "slow",
     done: function() {
       ui.currentView = view;
       $(ui.currentView).fadeIn("slow");
@@ -44,20 +44,24 @@ ui.switchViewTo = function(view) {
 
 // Insert X or O in appropriate cell
 ui.insertAt = function(index, symbol) {
-    var targetCell = $("#cell" + index);
-    if(!targetCell.hasClass("used")) {
-        targetCell.html(symbol);
-        targetCell.addClass("used");
-    }
+  globals.isFirstTurn = false;
+  var targetCell = $("#cell" + index);
+  if(!targetCell.hasClass("used")) {
+    targetCell.html(symbol);
+    targetCell.addClass("used");
+  }
 };
 
 // Clear board
 ui.clearBoard = function() {
+  globals.isFirstTurn = true;
   $(".cell").off();
-  $(".cell").removeClass("used");
-  $(".cell").html("");
-  $("#final-message").hide();
-  $(".player-message").show();
+  setTimeout(function() {
+    $(".cell").removeClass("used");
+    $(".cell").html("");
+    $("#final-message").hide();
+    $(".player-message").show();
+  }, 500);
 };
 
 // Update message for choosing symbol
@@ -74,7 +78,7 @@ ui.showFinalMessage = function() {
 
 // Toggle the 'Your Turn' Message
 ui.updateTurn = function() {
-  if (globals.gameType === "multiplayer") {
+  if (!globals.isSinglePlayer) {
     if (globals.game2.currentState.turn === globals.playerIcon) {
       $(".player-message").html("Your Turn: Player 1");
     }
@@ -82,7 +86,7 @@ ui.updateTurn = function() {
       $(".player-message").html("Your Turn: Player 2");
     }
   }
-  else if (globals.gameType === "single") {
+  else {
     if (globals.game.currentState.turn === globals.playerIcon) {
       $(".player-message").html("Your turn");
     }
@@ -90,7 +94,6 @@ ui.updateTurn = function() {
       $(".player-message").html("Please wait...");
     }
   }
-  
 };
 
 
@@ -124,7 +127,7 @@ AIAction.ASCENDING = function(firstAction, secondAction) {
     return 1;
   }
   else {
-    return 0;
+    return Math.floor(Math.random() * 3) - 1;
   }
 };
 
@@ -137,7 +140,8 @@ AIAction.DESCENDING = function(firstAction, secondAction) {
     return 1;
   }
   else {
-    return 0;
+    // Return -1, 0 or 1 (ie. doesn't matter whether we swap)
+    return Math.floor(Math.random() * 3) - 1;
   }
 };
 
@@ -154,97 +158,72 @@ var AI = function(difficulty) {
       return Game.score(state);
     }
     else {
-      var stateScore;
+      var currentScore;
       if (state.turn === "X") {
-        stateScore = -1000;
+        currentScore = -1000;
       } else {
-        stateScore = 1000;
+        currentScore = 1000;
       }
       var availablePositions = state.emptyCells();
       var availableNextStates = availablePositions.map(function(pos) {
-        var action = new AIAction(pos);
-        var nextState = action.applyTo(state);
+        var move = new AIAction(pos);
+        var nextState = move.applyTo(state);
         return nextState;
       });
       availableNextStates.forEach(function(nextState) {
         var nextScore = minimaxValue(nextState);
         if (state.turn === "X") {
-          if (nextScore > stateScore) {
-            stateScore = nextScore;
+          if (nextScore > currentScore) {
+            currentScore = nextScore;
           }
         }
         else {
-          if (nextScore < stateScore) {
-            stateScore = nextScore;
+          if (nextScore < currentScore) {
+            currentScore = nextScore;
           }
         }
       });
-      return stateScore;
+      return currentScore;
     }
   }
 
-  // AI move function for easy mode (100% random)
+  // AI move function for a random move
   function takeABlindMove(turn) {
-    var available = game.currentState.emptyCells();
-    var randomCell = available[Math.floor(Math.random() * available.length)];
-    var action = new AIAction(randomCell);
-    var next = action.applyTo(game.currentState);
+    var availableCells = game.currentState.emptyCells();
+    var randomCell = availableCells[Math.floor(Math.random() * availableCells.length)];
+    var randomMove = new AIAction(randomCell);
+    var nextState = randomMove.applyTo(game.currentState);
     ui.insertAt(randomCell, turn);
-    game.advanceTo(next);
+    game.advanceTo(nextState);
     ui.updateTurn();
   }
 
-  // AI move function for normal mode (only 40% optimal)
-  function takeANormalMove(turn) {
-    var available = game.currentState.emptyCells();
-    var availableActions = available.map(function(pos) {
-      var action = new AIAction(pos);
-      var nextState = action.applyTo(game.currentState);
-      action.minimaxVal = minimaxValue(nextState);
-      return action;
-    });
-    if (turn === "X") {
-      availableActions.sort(AIAction.DESCENDING);
-    } else {
-      availableActions.sort(AIAction.ASCENDING);
-    }
-    var chosenAction;
-    if (Math.random()*100 <= 40) {
-      chosenAction = availableActions[0];
-    }
-    else {
-      if (availableActions.length >= 2) {
-        chosenAction = availableActions[1];
-      }
-      else {
-        chosenAction = availableActions[0];
-      }
-    }
-    var next = chosenAction.applyTo(game.currentState);
-    ui.insertAt(chosenAction.movePosition, turn);
-    game.advanceTo(next);
-    ui.updateTurn();
-  }
-
-  // AI move function for hard mode (unbeatable)
+  // AI move function for a perfect move
   function takeAPerfectMove(turn) {
-    var available = game.currentState.emptyCells();
-    var availableActions = available.map(function(pos) {
-      var action = new AIAction(pos);
-      var next = action.applyTo(game.currentState);
-      action.minimaxVal = minimaxValue(next);
-      return action;
+    var availableCells = game.currentState.emptyCells();
+    var availableMoves = availableCells.map(function(pos) {
+      var move = new AIAction(pos);
+      var nextState = move.applyTo(game.currentState);
+      move.minimaxVal = minimaxValue(nextState);
+      return move;
     });
+    var chosenMove;
+    if (globals.isFirstTurn) {
+      var ran = 2 * Math.floor(Math.random() * 5);
+      chosenMove = availableMoves[ran];
+    }
     if (turn === "X") {
-      availableActions.sort(AIAction.DESCENDING);
+      availableMoves.sort(AIAction.DESCENDING);
     }
     else {
-      availableActions.sort(AIAction.ASCENDING);
+      availableMoves.sort(AIAction.ASCENDING);
     }
-    var chosenAction = availableActions[0];
-    var next = chosenAction.applyTo(game.currentState);
-    ui.insertAt(chosenAction.movePosition, turn);
-    game.advanceTo(next);
+    if (!globals.isFirstTurn) {
+      chosenMove = availableMoves[0];
+    }
+    var nextState = chosenMove.applyTo(game.currentState);
+    ui.insertAt(chosenMove.movePosition, turn);
+    game.advanceTo(nextState);
     ui.updateTurn();
   }
 
@@ -261,16 +240,28 @@ var AI = function(difficulty) {
           takeABlindMove(turn);
           break;
         case "normal":
-          takeANormalMove(turn);
+          if (Math.random() * 100 < 50) {
+            takeAPerfectMove(turn);
+          }
+          else {
+            takeABlindMove(turn);
+          }
           break;
         case "hard":
+          if (Math.random() * 100 < 85) {
+            takeAPerfectMove(turn);
+          }
+          else {
+            takeABlindMove(turn);
+          }
+          break;
+        case "master":
           takeAPerfectMove(turn);
           break;
       }
     }, 1200);
   };
 };
-
 
 
 //// GAME ////
@@ -316,22 +307,22 @@ var State = function(oldState) {
     var board = this.board;
     for (var i = 0; i <= 6; i = i + 3) {
       if (board[i] !== "E" && board[i] === board[i+1] && board[i+1] === board[i+2]) {
-        this.result = board[i] + "-won";
+        this.result = board[i];
         return true;
       }
     }
     for (var i = 0; i <= 2; i++) {
       if (board[i] !== "E" && board[i] === board[i+3] && board[i+3] === board[i+6]) {
-        this.result = board[i] + "-won";
+        this.result = board[i];
         return true;
       }
     }
     if (board[0] !== "E" && board[0] === board[4] && board[4] === board[8]) {
-      this.result = board[0] + "-won";
+      this.result = board[0];
       return true;
     }
     if (board[2] !== "E" && board[2] === board[4] && board[4] === board[6]) {
-      this.result = board[2] + "-won";
+      this.result = board[2];
       return true;
     }
     if (board.indexOf("E") === -1) {
@@ -359,56 +350,34 @@ var Game = function(autoPlayer) {
     this.currentState = _state;
     if (_state.isTerminal()) {
       this.status = "ended";
-      if (globals.gameType === "single") { //singleplayer
-        if (_state.result === "X-won") {
-          if (globals.playerIcon === "X") {
-            ui.finalMessage = "You Won!";
-          }
-          else {
-            ui.finalMessage = "You Lost...";
-          }
-        }
-        else if (_state.result === "O-won") {
-          if (globals.playerIcon === "O") {
-            ui.finalMessage = "You Won!";
-          }
-          else {
-            ui.finalMessage = "You Lost...";
-            }
+
+      if (_state.result === globals.playerIcon) {
+        if (globals.isSinglePlayer) {
+          ui.finalMessage = "You Won!";
         }
         else {
-          ui.finalMessage = "It's a Draw...";
+          ui.finalMessage = "Player 1 Wins!";
         }
       }
-      else {  // multiplayer
-        if (_state.result === "X-won") {
-          if (globals.playerIcon === "X") {
-            ui.finalMessage = "Player 1 Wins!";
-          }
-          else {
-            ui.finalMessage = "Player 2 Wins!";
-          }
-        }
-        else if (_state.result === "O-won") {
-          if (globals.playerIcon === "O") {
-            ui.finalMessage = "Player 1 Wins!";
-          }
-          else {
-            ui.finalMessage = "Player 2 Wins!";
-            }
+      else if (_state.result === "draw") {
+        ui.finalMessage = "It's a Draw...";
+      }
+      else {
+        if (globals.isSinglePlayer) {
+          ui.finalMessage = "You Lost...";
         }
         else {
-          ui.finalMessage = "It's a Draw...";
+          ui.finalMessage = "Player 2 Wins!";
         }
       }
       ui.showFinalMessage();
     }
     else {
       if (this.currentState.turn === globals.playerIcon) {
-        // IF IT'S A PLAYERS TURN DO NOTHING
+        // IF IT'S A PLAYERS TURN DO NOTHING //
       }
-      else if (globals.gameType === "single") {
-        // COMPUTERS TURN
+      else if (globals.isSinglePlayer) {
+        // AI'S TURN //
         ui.updateTurn();
         this.ai.notify(globals.aiIcon);
       }
@@ -427,10 +396,10 @@ var Game = function(autoPlayer) {
 // Calculate Game Score
 Game.score = function(_state) {
   if (_state.result !== "running") {
-    if (_state.result === "X-won") {
+    if (_state.result === "X") {
       return 10 - _state.aiMovesCount;
     }
-    else if (_state.result === "O-won") {
+    else if (_state.result === "O") {
       return -10 + _state.aiMovesCount;
     }
     else {
@@ -440,28 +409,26 @@ Game.score = function(_state) {
 }
 
 
-
 //// CONTROL ////
 $(document).ready(function() {
   
   // Intro
   ui.hideAllViews();
   $(".intro").animate({opacity: 1}, "slow");
-  
   setTimeout(function() {
     ui.switchViewTo(".player-choice");
   }, 2000);
 
   // Select Single Player
   $("#one-player").on("click", function() {
-    globals.gameType = "single";
+    globals.isSinglePlayer = true;
     ui.markMessage("And which would you prefer?");
     ui.switchViewTo(".difficulty-choice");
   });
 
   // Select Two Player
   $("#two-player").on("click", function() {
-    globals.gameType = "multiplayer";
+    globals.isSinglePlayer = false;
     ui.markMessage("Player 1, which would you prefer?");
     ui.switchViewTo(".mark-choice");
   });
@@ -482,7 +449,7 @@ $(document).ready(function() {
       globals.playerIcon = "O";
       globals.aiIcon = "X";
     }
-    if (globals.gameType === "single") {
+    if (globals.isSinglePlayer) {
       startSinglePlayer();
     }
     else {
@@ -499,7 +466,7 @@ $(document).ready(function() {
   // Refresh button
   $(".refresh").on("click", function() {
     ui.clearBoard();
-    if (globals.gameType === "single") {
+    if (globals.isSinglePlayer) {
       startSinglePlayer();
     }
     else {
@@ -507,7 +474,6 @@ $(document).ready(function() {
     }
   });
 });
-
 
 
 //// START FUNCTIONS ////
