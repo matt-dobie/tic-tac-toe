@@ -2,7 +2,6 @@
   Author: Matthew Dobie
   Author URL: mattdobie.com
   Description: Script for simple Tic-Tac-Toe Game
-  Inspired By: https://mostafa-samir.github.io/Tic-Tac-Toe-AI/
 */
 
 
